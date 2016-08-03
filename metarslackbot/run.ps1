@@ -5,6 +5,8 @@ $request = ((Get-Content $req -Raw).Split('&')[8]).Split('=')[1]
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get-Content $req -Raw).Split('&')[9]).Split('=')[1]) 
 $decoded_response_url
 
+Out-File -Encoding Ascii $response -inputObject "$request"
+
 switch ($request.Length) {
     3 {
         $airport_code = (Invoke-RestMethod -Method Get -Uri https://dotest.azurewebsites.net/api/get_ICAO_from_IATA?code=$request).icao
@@ -34,6 +36,3 @@ else {
 $res.Translations[0] | ConvertTo-Json
 
 Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
-
-Out-File -Encoding Ascii $response -inputObject "$res"
-
