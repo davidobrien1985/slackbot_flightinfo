@@ -1,7 +1,9 @@
-((Get-Content $req -Raw).Split('&')[2]).Split('=')[1]
-((Get-Content $req -Raw).Split('&')[6]).Split('=')[1]
-((Get-Content $req -Raw).Split('&')[8]).Split('=')[1]
-$request = ((Get-Content $req -Raw).Split('&')[8]).Split('=')[1]
+$in = Get-Content $req -Raw
+
+$in.Split('&')[2].Split('=')[1]
+$in.Split('&')[6].Split('=')[1]
+$in.Split('&')[8].Split('=')[1]
+$request = $in.Split('&')[8].Split('=')[1]
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get-Content $req -Raw).Split('&')[9]).Split('=')[1]) 
 $decoded_response_url
 
