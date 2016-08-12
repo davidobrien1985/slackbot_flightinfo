@@ -7,7 +7,7 @@
       "authLevel": "anonymous"
     },
     {
-      "name": "response",
+      "name": "res",
       "type": "http",
       "direction": "out"
     }
