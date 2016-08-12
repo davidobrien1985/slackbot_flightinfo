@@ -11,7 +11,7 @@ Out-File -Encoding Ascii $response -inputObject "$request"
 
 switch ($request.Length) {
     3 {
-        $airport_code = (Invoke-RestMethod -Method Get -Uri https://dotest.azurewebsites.net/api/get_ICAO_from_IATA?code=$request).icao
+        $airport_code = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_ICAO_from_IATA?code=$request).icao
     }
     4 {
         $airport_code = $request
