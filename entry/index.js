@@ -1,10 +1,12 @@
 module.exports = function (context, req) {
 
     var http = require('http');
+    var icao = $(req.query.icao);
+
+    context.log(`${icao}`);
 
     var options = {
-        hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${req.query.icao}",
-        port: 443,
+        hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icao}",
         method: 'Get',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
