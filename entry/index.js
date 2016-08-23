@@ -5,6 +5,9 @@ module.exports = function (context, req) {
 
     context.log('Input was %s',icao);
 
+    // $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get - Content $req - Raw).Split('&')[9]).Split('=')[1]) 
+    // $decoded_response_url
+
     function getMetar(output) {
 
         return http.get({

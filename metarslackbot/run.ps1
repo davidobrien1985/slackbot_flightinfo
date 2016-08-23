@@ -1,11 +1,4 @@
-#$in = Get-Content $req -Raw
-
-#$in.Split('&')[2].Split('=')[1]
-#$in.Split('&')[6].Split('=')[1]
-#$in.Split('&')[8].Split('=')[1]
 $request = $req_name_icao
-$decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get-Content $req -Raw).Split('&')[9]).Split('=')[1]) 
-$decoded_response_url
 
 Out-File -Encoding Ascii $response -inputObject "$request"
 
