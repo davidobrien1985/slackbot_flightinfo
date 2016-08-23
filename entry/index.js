@@ -3,10 +3,10 @@ module.exports = function (context, req) {
     var http = require('http');
     var icao = (req.query.icao);
 
-    context.log(`(icao)`);
+    context.log('Input was %s',icao);
 
     var options = {
-        hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao={icao}",
+        hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao=%s",icao,
         method: 'Get',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
