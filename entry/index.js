@@ -8,10 +8,10 @@ module.exports = function (context, req) {
     // $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get - Content $req - Raw).Split('&')[9]).Split('=')[1]) 
     // $decoded_response_url
 
-    function getMetar(output) {
+    function getMetar(icaocode) {
 
         return http.get({
-            host: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icao}`,
+            host: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`,
         }, function (response) {
             // Continuously update stream with data
             var body = '';
@@ -29,7 +29,7 @@ module.exports = function (context, req) {
         });
     }
 
-    getMetar;
+    getMetar(icao);
 
     context.done();
 };
