@@ -1,5 +1,7 @@
 module.exports = function (context, req) {
 
+    context.log(`${req}`);
+    context.log('Request Headers = ', JSON.stringify(req.body));
     var https = require('https');
     var icao = (req.query.icao);
 
