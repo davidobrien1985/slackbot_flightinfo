@@ -12,7 +12,7 @@ module.exports = function (context, req) {
 
     context.res = {
         status: 200, /* Defaults to 200 */
-        body: `Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`
+        text: `Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`
     }
 
     function getMetar(icaocode) {
