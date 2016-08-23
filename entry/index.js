@@ -39,5 +39,5 @@ module.exports = function (context, req) {
 
     getMetar(icao);
 
-    context.done();
+    context.done(`Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`);
 };
