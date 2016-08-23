@@ -6,7 +6,7 @@ module.exports = function (context, req) {
     context.log('Input was %s',icao);
 
     var options = {
-        hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao=%s",icao,
+        hostname: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icao}`,
         method: 'Get',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
