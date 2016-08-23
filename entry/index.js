@@ -1,20 +1,19 @@
 module.exports = function (context, req) {
 
-    context.log(`${req}`);
     context.log('Request Headers = ', JSON.stringify(req.body));
     var https = require('https');
-    var icao = (req.query.icao);
+
+    var input = JSON.stringify(req.body);
+    var icao = input.split('&')[8].split('=')[1];
+    var callback = input.split('&')[9].split('=')[1];
 
     context.log('Input was %s',icao);
 
-    // $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(((Get - Content $req - Raw).Split('&')[9]).Split('=')[1]) 
-    // $decoded_response_url
-
     function getMetar(icaocode) {
 
-        context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`);
+        context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}`);
 
-        https.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`, function (res) {
+        https.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
