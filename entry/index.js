@@ -5,29 +5,25 @@ module.exports = function (context, req) {
 
     context.log('Input was %s',icao);
 
-    var options = {
-        hostname: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icao}`,
-        method: 'Get',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        }
-    };
+    function getMetar(output) {
 
-    var request = http.request(options, (res) => {
-        context.log(`STATUS: ${res.statusCode}`);
-        context.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-        res.setEncoding('utf8');
-        res.on('data', (chunk) => {
-            console.log(`BODY: ${chunk}`);
+        return http.get({
+            host: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icao}`,
+        }, function (response) {
+            // Continuously update stream with data
+            var body = '';
+            response.on('data', function (d) {
+                body += d;
+            });
+            response.on('end', function () {
+
+                // Data reception is done, do whatever with it!
+                var parsed = JSON.parse(body);
+                output({
+                    body: parsed
+                });
+            });
         });
-        res.on('end', () => {
-            context.log('No more data in response.');
-        });
-    });
-
-    request.on('error', (e) => {
-        context.log(`problem with request: ${e.message}`);
-    });
-
+    }
     context.done();
 };
