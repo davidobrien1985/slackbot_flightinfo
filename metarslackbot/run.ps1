@@ -3,7 +3,7 @@ $request = $req_query_icao
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback) 
 $decoded_response_url
 
-#Out-File -Encoding Ascii $response -inputObject "$request"
+Out-File -Encoding Ascii $response -inputObject "$request"
 
 switch ($request.Length) {
     3 {

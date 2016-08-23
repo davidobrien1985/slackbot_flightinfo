@@ -6,8 +6,14 @@ module.exports = function (context, req) {
     var input = JSON.stringify(req.body);
     var icao = input.split('&')[8].split('=')[1];
     var callback = input.split('&')[9].split('=')[1];
+    var username = input.split('&')[6].split('=')[1];
 
     context.log('Input was %s',icao);
+
+    context.res = {
+        status: 200, /* Defaults to 200 */
+        body: `Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`
+    }
 
     function getMetar(icaocode) {
 
