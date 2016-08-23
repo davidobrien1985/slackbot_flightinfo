@@ -1,5 +1,7 @@
 module.exports = function (context, req) {
 
+    var http = require('http');
+
     var options = {
         hostname: "https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${req.query.icao}",
         port: 443,
