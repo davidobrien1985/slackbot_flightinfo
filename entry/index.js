@@ -1,6 +1,6 @@
 module.exports = function (context, req) {
 
-    var http = require('http');
+    var https = require('https');
     var icao = (req.query.icao);
 
     context.log('Input was %s',icao);
@@ -12,7 +12,7 @@ module.exports = function (context, req) {
 
         context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`);
 
-        http.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`, function (res) {
+        https.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
