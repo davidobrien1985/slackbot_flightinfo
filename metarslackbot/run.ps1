@@ -1,4 +1,4 @@
-$request = $req_name_icao
+$request = $req_query_icao
 
 Out-File -Encoding Ascii $response -inputObject "$request"
 
