@@ -9,7 +9,7 @@ module.exports = function (context, req) {
 
     context.log('Input was %s',icao);
 
-    context.response = {
+    context.bindings.response = {
         status: 200, /* Defaults to 200 */
         text: `Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`
     };
@@ -39,5 +39,5 @@ module.exports = function (context, req) {
 
     getMetar(icao);
 
-    context.done(`Hello ${username}, I am getting your weather for ${icao}, try again if you have not heard back in 20s.`);
+    context.done();
 };
