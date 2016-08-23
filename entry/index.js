@@ -28,5 +28,8 @@ module.exports = function (context, req) {
             });
         });
     }
+
+    getMetar;
+
     context.done();
 };
