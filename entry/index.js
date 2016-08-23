@@ -10,10 +10,25 @@ module.exports = function (context, req) {
 
     function getMetar(icaocode) {
 
-        console.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`);
-        return http.get({
-            host: `https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`,
-        });
+        context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`);
+
+        http.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}`, function (res) {
+            var body = ''; // Will contain the final response
+            // Received data is a buffer.
+            // Adding it to our body
+            res.on('data', function (data) {
+                body += data;
+            });
+            // After the response is completed, parse it and log it to the console
+            res.on('end', function () {
+                var parsed = JSON.parse(body);
+                context.log(parsed);
+            });
+        })
+            // If any error has occured, log error to console
+            .on('error', function (e) {
+                context.log("Got error: " + e.message);
+            });
     }
 
     getMetar(icao);
