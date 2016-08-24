@@ -42,7 +42,7 @@ $result = @{
 
 if ($flightInfo.AirlineFlightInfoResult) {
     $response_body = @{
-        text = "$($result| ConvertTo-Json)"
+        text = "$result"
         response_type = 'in_channel'
     }
 }
