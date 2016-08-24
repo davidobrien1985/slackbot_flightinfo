@@ -30,8 +30,8 @@ $decoded_response_url
 
 $result = @{
   'Flight #' = $flightInfo.AirlineFlightInfoResult.ident
-  'From' = $flightInfo.AirlineFlightInfoResult.originCity
-  'To' = $flightInfo.AirlineFlightInfoResult.destinationCity
+  'From' = $flightInfoEx.FlightInfoExResult.flights[1].originCity
+  'To' = $flightInfoEx.FlightInfoExResult.flights[1].destinationCity
   'Type of aircraft' = $flightInfoEx.FlightInfoExResult.flights[1].aircrafttype
   'Departure Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_orig
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
