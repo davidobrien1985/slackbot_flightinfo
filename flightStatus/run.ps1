@@ -5,6 +5,8 @@ $in.Split('&')[6].Split('=')[1]
 $in.Split('&')[8].Split('=')[1]
 $request = $in.Split('&')[8].Split('=')[1]
 
+Out-File -Encoding Ascii $response -inputObject "$request"
+
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
 $basicAuthValue = "Basic $encodedCreds"
