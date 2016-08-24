@@ -26,7 +26,7 @@ $decoded_response_url
 
 if ($flightInfo.AirlineFlightInfoResult) {
     $response_body = @{
-        text = $flightInfo.AirlineFlightInfoResult
+        text = "$($flightInfo.AirlineFlightInfoResult | ConvertTo-Json)"
         response_type = 'in_channel'
     }
 }
