@@ -18,7 +18,7 @@ switch ($request.Length) {
 }
 
 $airport_code
-$res = Invoke-RestMethod -Method Get -Uri "http://avwx-api.azurewebsites.net/api/metar/$airport_code&?ormat=JSON&options=translate,info" -verbose
+$res = Invoke-RestMethod -Method Get -Uri "http://avwx-api.azurewebsites.net/api/metar/$airport_code&?format=JSON&options=translate,info" -verbose
 
 if ($res) {
     $response_body = @{
