@@ -1,8 +1,7 @@
 $in = Get-Content $req -Raw
 
 Function ConvertFrom-Unixdate ($UnixDate) {
-  [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').`
-  AddSeconds($UnixDate))
+  [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
 }
 
 $in.Split('&')[2].Split('=')[1]
@@ -36,13 +35,13 @@ $result = @{
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
   'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
   'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-  'Scheduled Departure Time' = ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[1].filed_departuretime
-  'Estimated Arrival Time' = ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[1].estimatedarrivaltime
+  'Scheduled Departure Time' = (ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[1].filed_departuretime).toString()
+  'Estimated Arrival Time' = (ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[1].estimatedarrivaltime).toString()
 }
 
 if ($flightInfo.AirlineFlightInfoResult) {
     $response_body = @{
-        text = "$result"
+        text = "$($result | Convertto-Json)"
         response_type = 'in_channel'
     }
 }
