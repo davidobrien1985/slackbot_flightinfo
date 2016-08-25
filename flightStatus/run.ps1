@@ -27,6 +27,8 @@ $Headers = @{
   Authorization = $basicAuthValue
 }
 
+$decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1])
+
 $flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($request)&howMany=2" -Headers $Headers -Verbose
 if ($flightInfoEx.error) {
 	$response_body = @{
@@ -40,10 +42,6 @@ else {
 	$flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($actualflightInfo.faFlightID)" -Headers $Headers -Verbose
 	$flightInfo.AirlineFlightInfoResult
 	(ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
-
-
-	$decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1]) 
-	$decoded_response_url
 
 	$result = @{
 	  'Flight #' = $flightInfo.AirlineFlightInfoResult.ident
