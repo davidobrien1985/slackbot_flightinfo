@@ -24,6 +24,7 @@ $actualflightInfo
 
 $flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($actualflightInfo.faFlightID)" -Headers $Headers -Verbose
 $flightInfo.AirlineFlightInfoResult
+(ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
 
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1]) 
 $decoded_response_url
@@ -37,7 +38,7 @@ $result = @{
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
   'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
   'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-  'Scheduled Departure Time' = (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
+  'Filed Departure Time' = (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
   'Estimated Arrival Time' = (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString()
 }
 
