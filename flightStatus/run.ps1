@@ -48,8 +48,8 @@ $result = @{
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
   'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
   'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-  'Filed Departure Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime)).toString()
-  'Estimated Arrival Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime)).toString()
+  'Filed Departure Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()).toString()
+  'Estimated Arrival Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString()).toString()
 }
 
 if ($flightInfo.AirlineFlightInfoResult) {
