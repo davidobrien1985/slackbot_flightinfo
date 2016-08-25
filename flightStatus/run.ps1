@@ -4,6 +4,15 @@ Function ConvertFrom-Unixdate ($UnixDate) {
   [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
 }
 
+# http://blog.tyang.org/2012/01/11/powershell-script-convert-to-local-time-from-utc/
+Function Get-LocalTime($UTCTime)
+{
+$strCurrentTimeZone = 'AUS Eastern Standard Time'
+$TZ = [System.TimeZoneInfo]::FindSystemTimeZoneById($strCurrentTimeZone)
+$LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
+Return $LocalTime
+}
+
 $in.Split('&')[2].Split('=')[1]
 $in.Split('&')[6].Split('=')[1]
 $in.Split('&')[8].Split('=')[1]
@@ -26,6 +35,7 @@ $flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.
 $flightInfo.AirlineFlightInfoResult
 (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
 
+
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1]) 
 $decoded_response_url
 
@@ -38,8 +48,8 @@ $result = @{
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
   'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
   'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-  'Filed Departure Time' = (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
-  'Estimated Arrival Time' = (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString()
+  'Filed Departure Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString())
+  'Estimated Arrival Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString())
 }
 
 if ($flightInfo.AirlineFlightInfoResult) {
