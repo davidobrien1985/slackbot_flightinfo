@@ -19,10 +19,10 @@ $Headers = @{
 }
 
 $flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($request)&howMany=2" -Headers $Headers -Verbose
-$flightId = $flightInfoEx.FlightInfoExResult.flights[0].faFlightID
+$actualflightInfo = $flightInfoEx.FlightInfoExResult.flights[0]
+$actualflightInfo
 
-
-$flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$flightId" -Headers $Headers -Verbose
+$flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($actualflightInfo.faFlightID)" -Headers $Headers -Verbose
 $flightInfo.AirlineFlightInfoResult
 
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1]) 
@@ -30,15 +30,15 @@ $decoded_response_url
 
 $result = @{
   'Flight #' = $flightInfo.AirlineFlightInfoResult.ident
-  'From' = $flightInfoEx.FlightInfoExResult.flights[0].originCity
-  'To' = $flightInfoEx.FlightInfoExResult.flights[0].destinationCity
-  'Type of aircraft' = $flightInfoEx.FlightInfoExResult.flights[1].aircrafttype
+  'From' = $actualflightInfo.originCity
+  'To' = $actualflightInfo.destinationCity
+  'Type of aircraft' = $actualflightInfo.aircrafttype
   'Departure Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_orig
   'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
   'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
   'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-  'Scheduled Departure Time' = (ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[0].filed_departuretime).toString()
-  'Estimated Arrival Time' = (ConvertFrom-Unixdate $flightInfoEx.FlightInfoExResult.flights[0].estimatedarrivaltime).toString()
+  'Scheduled Departure Time' = (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
+  'Estimated Arrival Time' = (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString()
 }
 
 if ($flightInfo.AirlineFlightInfoResult) {
