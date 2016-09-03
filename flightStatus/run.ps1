@@ -1,4 +1,4 @@
-$in = Get-Content $req -Raw
+#$in = Get-Content $req -Raw
 
 Function ConvertFrom-Unixdate ($UnixDate) {
   [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
@@ -13,10 +13,10 @@ $LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
 Return $LocalTime
 }
 
-$in.Split('&')[2].Split('=')[1]
-$in.Split('&')[6].Split('=')[1]
-$in.Split('&')[8].Split('=')[1]
-$request = $in.Split('&')[8].Split('=')[1]
+#$in.Split('&')[2].Split('=')[1]
+#$in.Split('&')[6].Split('=')[1]
+#$in.Split('&')[8].Split('=')[1]
+$request = $req_query_flightnumber #$in.Split('&')[8].Split('=')[1]
 
 Out-File -Encoding Ascii $response -inputObject "$request"
 
@@ -27,7 +27,7 @@ $Headers = @{
   Authorization = $basicAuthValue
 }
 
-$decoded_response_url = [System.Web.HttpUtility]::UrlDecode(($in.Split('&')[9]).Split('=')[1])
+$decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback)
 
 $flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($request)&howMany=2" -Headers $Headers -Verbose
 if ($flightInfoEx.error) {
