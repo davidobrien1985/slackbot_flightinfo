@@ -7,6 +7,7 @@ module.exports = function (context, req) {
     var callback = input.split('&')[9].split('=')[1];
     var username = input.split('&')[6].split('=')[1];
 
+    // define function to call other Azure function to get the weather
     function getMetar(icaocode) {
 
         context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}`);
@@ -33,8 +34,9 @@ module.exports = function (context, req) {
     context.log('Input was %s', userquery);
     context.log('%s', userquery.length);
 
+    // define regexpattern for IATA or ICAO airport codes, either 3 or 4 letters allowed
     var regexpattern = /^[a-zA-Z]+$/;
-    context.log('%s', regexpattern.test(userquery));
+
 
     if ((userquery.length == 3 || userquery.length == 4) && regexpattern.test(userquery)) {
 
