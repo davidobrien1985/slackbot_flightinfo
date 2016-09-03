@@ -34,6 +34,23 @@ module.exports = function (context, req) {
 
     function getFlightStatus(flightnumber) {
         context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`);
+        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`, function (res) {
+            var body = ''; // Will contain the final response
+            // Received data is a buffer.
+            // Adding it to our body
+            res.on('data', function (data) {
+                body += data;
+            });
+            // After the response is completed, parse it and log it to the console
+            res.on('end', function () {
+                var parsed = JSON.parse(body);
+                context.log(parsed);
+            });
+        })
+            // If any error has occured, log error to console
+            .on('error', function (e) {
+                context.log("Got error: " + e.message);
+            });
     }
 
     context.log('Command was %s', command); 
