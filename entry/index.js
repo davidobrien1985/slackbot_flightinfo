@@ -39,7 +39,7 @@ module.exports = function (context, req) {
     context.log('Command was %s', command); 
     context.log('Input was %s', userquery);
     
-    if (command == '/metar') {
+    if (command == '%2Fmetar') {
 
         context.bindings.response = `Hello ${username}, I am getting your weather for ${userquery}, try again if you have not heard back in 20s.`;
 
@@ -47,7 +47,7 @@ module.exports = function (context, req) {
 
         context.done();
     }
-    else if (command == '/flightstatus') {
+    else if (command == '%2Fflightstatus') {
         getFlightStatus(userquery);
         context.done();
     }
