@@ -32,9 +32,11 @@ module.exports = function (context, req) {
 
     context.log('Input was %s', userquery);
     context.log('%s', userquery.length);
-    context.log('%s', userquery.test('/^[a-zA-Z]+$'));
 
-    if ((userquery.length == 3 || userquery.length == 4) && userquery.test('/^[a-zA-Z]+$')) {
+    var regexpattern = /^[a-zA-Z]+$/;
+    context.log('%s', regexpattern.test(userquery));
+
+    if ((userquery.length == 3 || userquery.length == 4) && regexpattern.test(userquery)) {
 
         context.bindings.response = `Hello ${username}, I am getting your weather for ${userquery}, try again if you have not heard back in 20s.`;
 
