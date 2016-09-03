@@ -32,14 +32,14 @@ module.exports = function (context, req) {
 
     context.log('Input was %s', userquery);
     context.log('%s', userquery.length);
-    context.log('%s', userquery.match('/^[a-zA-Z]+$'));
+    context.log('%s', userquery.test('/^[a-zA-Z]+$'));
 
-    if ((userquery.length == 3 || userquery.length == 4) && userquery.match('/^[a-zA-Z]+$')) {
+    if ((userquery.length == 3 || userquery.length == 4) && userquery.test('/^[a-zA-Z]+$')) {
 
         context.bindings.response = `Hello ${username}, I am getting your weather for ${userquery}, try again if you have not heard back in 20s.`;
 
         getMetar(userquery);
 
         context.done();
-    };
+    }
 };
