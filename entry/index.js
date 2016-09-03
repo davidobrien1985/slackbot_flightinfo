@@ -34,10 +34,11 @@ module.exports = function (context, req) {
 
     function getFlightStatus(flightnumber) {
         context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`);
-    };
+    }
 
+    context.log('Command was %s', command); 
     context.log('Input was %s', userquery);
-
+    
     if (command == '/metar') {
 
         context.bindings.response = `Hello ${username}, I am getting your weather for ${userquery}, try again if you have not heard back in 20s.`;
