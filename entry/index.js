@@ -5,7 +5,7 @@ module.exports = function (context, req) {
     context.log('context:', JSON.stringify(context, null, 2));
     
     var hostjson = JSON.parse(fs.readFile('D:/home/data/Functions/secrets/host.json'));
-    if (req.code != hostjson.functionKey) {
+    if (req.query.code != hostjson.functionKey) {
         context.log('Provided API key is not authorized to execute the function further.');
         context.done();
     }
