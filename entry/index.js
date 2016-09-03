@@ -4,7 +4,9 @@ var https = require('https');
 module.exports = function (context, req) {
     context.log('context:', JSON.stringify(context, null, 2));
     
-    var hostjson = JSON.parse(fs.readFile('D:/home/data/Functions/secrets/host.json'));
+    var hostjson = JSON.parse(fs.readFileSync('D:/home/data/Functions/secrets/host.json', 'utf8'));
+    context.log('%s', hostjson);
+
     if (req.query.code != hostjson.functionKey) {
         context.log('Provided API key is not authorized to execute the function further.');
         context.done();
