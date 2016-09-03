@@ -3,6 +3,7 @@ module.exports = function (context, req) {
     var https = require('https');
 
     var input = JSON.stringify(req.body);
+    var command = input.split('&')[7].split('=')[1];
     var userquery = input.split('&')[8].split('=')[1];
     var callback = input.split('&')[9].split('=')[1];
     var username = input.split('&')[6].split('=')[1];
@@ -31,19 +32,22 @@ module.exports = function (context, req) {
             });
     }
 
+    function getFlightStatus(flightnumber) {
+        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`);
+    };
+
     context.log('Input was %s', userquery);
-    context.log('%s', userquery.length);
 
-    // define regexpattern for IATA or ICAO airport codes, either 3 or 4 letters allowed
-    var regexpattern = /^[a-zA-Z]+$/;
-
-
-    if ((userquery.length == 3 || userquery.length == 4) && regexpattern.test(userquery)) {
+    if (command == '/metar') {
 
         context.bindings.response = `Hello ${username}, I am getting your weather for ${userquery}, try again if you have not heard back in 20s.`;
 
         getMetar(userquery);
 
+        context.done();
+    }
+    else if (command == '/flightstatus') {
+        getFlightStatus(userquery);
         context.done();
     }
 };
