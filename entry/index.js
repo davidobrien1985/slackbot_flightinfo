@@ -48,6 +48,7 @@ module.exports = function (context, req) {
         context.done();
     }
     else if (command == '%2Fflightstatus') {
+        context.bindings.response = `Hello ${username}, I am getting the status for ${userquery}, try again if you have not heard back in 20s.`;
         getFlightStatus(userquery);
         context.done();
     }
