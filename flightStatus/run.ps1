@@ -25,7 +25,7 @@ $Headers = @{
   Authorization = $basicAuthValue
 }
 
-$decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback)
+$decoded_response_url = ([System.Web.HttpUtility]::UrlDecode($req_query_callback)).TrimEnd('"')
 $decoded_response_url
 
 $flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($request)&howMany=2" -Headers $Headers -Verbose
