@@ -1,5 +1,3 @@
-#$in = Get-Content $req -Raw
-
 Function ConvertFrom-Unixdate ($UnixDate) {
   [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
 }
@@ -13,10 +11,7 @@ $LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
 Return $LocalTime
 }
 
-#$in.Split('&')[2].Split('=')[1]
-#$in.Split('&')[6].Split('=')[1]
-#$in.Split('&')[8].Split('=')[1]
-$req_query_flightnumber #$in.Split('&')[8].Split('=')[1]
+$req_query_flightnumber 
 
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
@@ -26,17 +21,14 @@ $Headers = @{
 }
 
 $decoded_response_url = ([System.Web.HttpUtility]::UrlDecode($req_query_callback)).TrimEnd('"')
-$decoded_response_url
 
-#$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($req_query_flightnumber)&howMany=2" -Headers $Headers -Verbose
-
-$yesterday = ([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s"))).ToString()
+$today = ([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s"))).ToString()
 $tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalTime()-uformat "%s"))
 
 $airline = $req_query_flightnumber.Substring(0,3)
 $flightno = $req_query_flightnumber.Substring(3)
 
-$flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($yesterday)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
+$flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers
 
 if ($flight.error) {
 	$response_body = @{
@@ -46,14 +38,20 @@ if ($flight.error) {
 else {
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$req_query_flightnumber"})
 
+$flightident = "$req_query_flightnumber@$($actualflight.departuretime)"
+$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers
+$airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers).AirlineFlightInfoResult
+
 	$result = @{
 	  'Flight #' = $actualflight.ident
 	  'Code Share Flight #' = $(if ($actualflight.actual_ident) {$actualflight.actual_ident} else {'n/a'})
-	  'From' = $actualflight.origin
-	  'To' = $actualflight.destination
+	  'From' = $flightInfoEx.FlightInfoExResult.flights.originName
+	  'To' = $flightInfoEx.FlightInfoExResult.flights.destinationName
 	  'Type of aircraft' = $actualflight.aircrafttype
 	  'Filed Departure Time' = (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate ($actualflight).departuretime).ToString())).ToString()
 	  'Estimated Arrival Time' = (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate ($actualflight).arrivaltime).ToString())).ToString()
+	  'Departure Gate' = $airlineflightInfo.gate_orig
+	  'Departure Terminal' = $airlineflightInfo.terminal_orig
 	}
 
 	$response_body = @{
