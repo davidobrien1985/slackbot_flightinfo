@@ -47,11 +47,11 @@ $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flig
 $actualflight
 $flightInfoEx
 $airlineflightInfo
-${actualflight.ident}
-${actualflight.aircrafttype}
+${actualflight}.ident
+${actualflight}.aircrafttype
 
 $result = @"
-Flight # = ${actualflight.ident}
+Flight # = $(${actualflight}.ident)
 Code Share Flight # = $(if (${actualflight.actual_ident}) {${actualflight.actual_ident}} else {'n/a'})
 From = ${flightInfoEx.FlightInfoExResult.flights.originName}
 To = ${flightInfoEx.FlightInfoExResult.flights.destinationName}
