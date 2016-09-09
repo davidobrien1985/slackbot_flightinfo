@@ -48,7 +48,7 @@ $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -Filte
 
 	$result = @{
 	  'Flight #' = $actualflight.ident
-	  'Code Share Flight #' = (if ($actualflight.actual_ident) {$actualflight.actual_ident} else {'n/a'})
+	  'Code Share Flight #' = $(if ($actualflight.actual_ident) {$actualflight.actual_ident} else {'n/a'})
 	  'From' = $actualflight.origin
 	  'To' = $actualflight.destination
 	  'Type of aircraft' = $actualflight.aircrafttype
