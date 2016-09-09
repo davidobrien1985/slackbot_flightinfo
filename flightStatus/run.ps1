@@ -30,6 +30,10 @@ $flightno = $req_query_flightnumber.Substring(3)
 
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
 
+Write-Host "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)"
+$flight
+
+
 if ($flight.error) {
 	$response_body = @{
 			text = 'This flight number does not exist or does not exist in the Flightaware database.'
@@ -39,7 +43,7 @@ else {
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$req_query_flightnumber"})
 
 $flightident = "$req_query_flightnumber@$($actualflight.departuretime)"
-$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose
+$flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
 $actualflight
