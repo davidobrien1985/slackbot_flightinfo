@@ -54,6 +54,7 @@ Departure Gate = $($airlineflightInfo.gate_orig)
 Departure Terminal = $($airlineflightInfo.terminal_orig)
 "@
 
+$result
 	$response_body = @{
 		text = "$result"
 		response_type = 'in_channel'
