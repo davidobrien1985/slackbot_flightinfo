@@ -16,7 +16,7 @@ Return $LocalTime
 #$in.Split('&')[2].Split('=')[1]
 #$in.Split('&')[6].Split('=')[1]
 #$in.Split('&')[8].Split('=')[1]
-$request = $req_query_flightnumber #$in.Split('&')[8].Split('=')[1]
+$req_query_flightnumber #$in.Split('&')[8].Split('=')[1]
 
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
@@ -28,43 +28,36 @@ $Headers = @{
 $decoded_response_url = ([System.Web.HttpUtility]::UrlDecode($req_query_callback)).TrimEnd('"')
 $decoded_response_url
 
-$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($request)&howMany=2" -Headers $Headers -Verbose
-if ($flightInfoEx.error) {
+#$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($req_query_flightnumber)&howMany=2" -Headers $Headers -Verbose
+
+$yesterday = ([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s"))).ToString()
+$tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalTime()-uformat "%s"))
+
+$airline = $req_query_flightnumber.Substring(0,3)
+$flightno = $req_query_flightnumber.Substring(3)
+
+$flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($yesterday)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
+
+if ($flight.error) {
 	$response_body = @{
 			text = 'This flight number does not exist or does not exist in the Flightaware database.'
 		}
 }
 else {
-	$actualflightInfo = $flightInfoEx.FlightInfoExResult.flights[0]
-	$actualflightInfo
-
-	$flightInfo = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($actualflightInfo.faFlightID)" -Headers $Headers -Verbose
-	$flightInfo.AirlineFlightInfoResult
-	(ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()
+$actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$req_query_flightnumber"})
 
 	$result = @{
-	  'Flight #' = $flightInfo.AirlineFlightInfoResult.ident
-	  'From' = $actualflightInfo.originCity
-	  'To' = $actualflightInfo.destinationCity
-	  'Type of aircraft' = $actualflightInfo.aircrafttype
-	  'Departure Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_orig
-	  'Departure Gate' = $flightInfo.AirlineFlightInfoResult.gate_orig
-	  'Arrival Terminal' = $flightInfo.AirlineFlightInfoResult.terminal_dest
-	  'Arrival Gate' = if ($flightInfo.AirlineFlightInfoResult.gate_dest) {$flightInfo.AirlineFlightInfoResult.gate_dest} else {'n/a'}
-	  'Filed Departure Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.filed_departuretime).toString()).toString()
-	  'Estimated Arrival Time' = (Get-LocalTime -UTCTime (ConvertFrom-Unixdate $actualflightInfo.estimatedarrivaltime).toString()).toString()
+	  'Flight #' = $actualflight.actual_ident
+	  'From' = $actualflight.origin
+	  'To' = $actualflight.destination
+	  'Type of aircraft' = $actualflight.aircrafttype
+	  'Filed Departure Time' = (ConvertFrom-Unixdate ($actualflight).departuretime).ToString()
+	  'Estimated Arrival Time' = (ConvertFrom-Unixdate ($actualflight).arrivaltime).ToString()
 	}
 
-	if ($flightInfo.AirlineFlightInfoResult) {
-		$response_body = @{
-			text = "$($result | Convertto-Json)"
-			response_type = 'in_channel'
-		}
-	}
-	else {
-		$response_body = @{
-			text = 'Something went wrong with the Flight Status API.'
-		}
+	$response_body = @{
+		text = "$($result | Convertto-Json)"
+		response_type = 'in_channel'
 	}
 }
 
