@@ -47,7 +47,8 @@ else {
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$req_query_flightnumber"})
 
 	$result = @{
-	  'Flight #' = $actualflight.actual_ident
+	  'Flight #' = $actualflight.ident
+	  'Code Share Flight #' = (if ($actualflight.actual_ident) {$actualflight.actual_ident} else {'n/a'})
 	  'From' = $actualflight.origin
 	  'To' = $actualflight.destination
 	  'Type of aircraft' = $actualflight.aircrafttype
