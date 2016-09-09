@@ -42,6 +42,9 @@ $flightident = "$req_query_flightnumber@$($actualflight.departuretime)"
 $flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers).AirlineFlightInfoResult
 
+${actualflight.ident}
+${actualflight.aircrafttype}
+
 $result = @"
 Flight # = ${actualflight.ident}
 Code Share Flight # = $(if (${actualflight.actual_ident}) {${actualflight.actual_ident}} else {'n/a'})
@@ -54,11 +57,11 @@ Departure Gate = ${airlineflightInfo.gate_orig}
 Departure Terminal = ${airlineflightInfo.terminal_orig}
 "@
 
-$result
-	$response_body = @{
-		text = "$result"
-		response_type = 'in_channel'
-	}
+$result.ToString()
+$response_body = @{
+	text = "$result"
+	response_type = 'in_channel'
+}
 }
 
 Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
