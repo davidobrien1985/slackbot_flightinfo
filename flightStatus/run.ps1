@@ -28,7 +28,7 @@ $tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalT
 $airline = $req_query_flightnumber.Substring(0,3)
 $flightno = $req_query_flightnumber.Substring(3)
 
-$flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers
+$flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
 
 if ($flight.error) {
 	$response_body = @{
@@ -39,9 +39,12 @@ else {
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$req_query_flightnumber"})
 
 $flightident = "$req_query_flightnumber@$($actualflight.departuretime)"
-$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers
-$airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers).AirlineFlightInfoResult
+$flightInfoEx = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose
+$airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
+$actualflight
+$flightInfoEx
+$airlineflightInfo
 ${actualflight.ident}
 ${actualflight.aircrafttype}
 
