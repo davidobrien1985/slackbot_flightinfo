@@ -51,8 +51,8 @@ $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -Filte
 	  'From' = $actualflight.origin
 	  'To' = $actualflight.destination
 	  'Type of aircraft' = $actualflight.aircrafttype
-	  'Filed Departure Time' = (ConvertFrom-Unixdate ($actualflight).departuretime).ToString()
-	  'Estimated Arrival Time' = (ConvertFrom-Unixdate ($actualflight).arrivaltime).ToString()
+	  'Filed Departure Time' = (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate ($actualflight).departuretime).ToString())).ToString()
+	  'Estimated Arrival Time' = (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate ($actualflight).arrivaltime).ToString())).ToString()
 	}
 
 	$response_body = @{
