@@ -11,8 +11,6 @@ $LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
 Return $LocalTime
 }
 
-$req_query_flightnumber 
-
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
 $basicAuthValue = "Basic $encodedCreds"
@@ -30,8 +28,8 @@ $flightno = $req_query_flightnumber.Substring(3)
 
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
 
-Write-Host "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)"
-$flight
+Write-Output "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)"
+$flight.AirlineFlightSchedulesResult.data
 
 
 if ($flight.error) {
