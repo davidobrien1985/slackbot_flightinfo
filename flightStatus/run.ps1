@@ -41,12 +41,12 @@ $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightawa
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
 $result = @"
-Flight # = $(${actualflight}.ident)
+Flight # = *$(${actualflight}.ident)*
 Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
-From = $(${flightInfoEx}.originName)
-To = $(${flightInfoEx}.destinationName)
+From = *$(${flightInfoEx}.originName)*
+To = *$(${flightInfoEx}.destinationName)*
 Type of aircraft = $(${actualflight}.aircrafttype)
-Filed Departure Time = $((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())
+Filed Departure Time = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
 Estimated Arrival Time = $((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
 Departure Gate = $(${airlineflightInfo}.gate_orig)
 Departure Terminal = $(${airlineflightInfo}.terminal_orig)
