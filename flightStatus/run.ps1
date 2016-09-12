@@ -23,7 +23,7 @@ $decoded_response_url = ([System.Web.HttpUtility]::UrlDecode($req_query_callback
 $today = ([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s"))).ToString()
 $tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalTime()-uformat "%s"))
 
-$airline = $req_query_flightnumber.Substring(0,3)
+$airline = ($req_query_flightnumber.Substring(0,3)).ToUpper()
 $flightno = $req_query_flightnumber.Substring(3)
 
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
