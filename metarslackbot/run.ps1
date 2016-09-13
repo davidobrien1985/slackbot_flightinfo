@@ -5,6 +5,13 @@ $decoded_response_url = $decoded_response_url.TrimEnd('"')
 
 Out-File -Encoding Ascii $response -inputObject "$request"
 
+$pair = "$($env:flightaware_user):$($env:flightaware_api)"
+$encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
+$basicAuthValue = "Basic $encodedCreds"
+$Headers = @{
+  Authorization = $basicAuthValue
+}
+
 Function ConvertFrom-Unixdate ($UnixDate) {
   [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
 }
