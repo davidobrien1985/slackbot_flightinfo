@@ -41,15 +41,27 @@ $airport_code = ($airport_code).ToUpper()
 $weather = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/MetarEx?airport=$($airport_code)&howMany=1" -Headers $Headers -Verbose).MetarExResult.metar
 $airport = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($airport_code)" -Headers $Headers -Verbose).AirportInfoResult
 
+# Get air pressure in hPa
+$regex = 'Q\d{4}'
+($metar.MetarExResult.metar.raw_data) -match $regex
+$pressure = $Matches[0]
+
+# CAVOK?
+$regex = 'CAVOK'
+if (($metar.MetarExResult.metar.raw_data) -match $regex) {
+	$CAVOK = $true
+}
+
 $result = @"
 Weather Info for $(${airport}.name) / ${airport_code}
 Observation Date = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${weather}.time)).ToString())).ToString())*
 Clouds = $(${weather}.cloud_friendly)
-Clouds altitude = $(${weather}.cloud_altitude)
+Clouds altitude = $(if ($CAVOK) {"No clouds below 10,000ft"} else {$(${weather}.cloud_altitude)})
 Cloud type = $(${weather}.cloud_type)
-Pressure = $(${weather}.pressure)
-Wind = $(${weather}.wind_direction) / $(${weather}.wind_speed)
-Wind Gusts = $(${weather}.wind_speed_gust)
+Temperature = $(${weather}.temp_air) C
+Pressure = $(${pressure}) hPa
+Wind = $(${weather}.wind_direction) degrees / $(${weather}.wind_speed) kts
+Wind Gusts = $(${weather}.wind_speed_gust) kts
 Visibility = $(${weather}.visibility)
 "@
 
