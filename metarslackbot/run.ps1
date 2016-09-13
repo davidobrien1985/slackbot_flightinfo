@@ -5,6 +5,19 @@ $decoded_response_url = $decoded_response_url.TrimEnd('"')
 
 Out-File -Encoding Ascii $response -inputObject "$request"
 
+Function ConvertFrom-Unixdate ($UnixDate) {
+  [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
+}
+
+# http://blog.tyang.org/2012/01/11/powershell-script-convert-to-local-time-from-utc/
+Function Get-LocalTime($UTCTime)
+{
+$strCurrentTimeZone = 'AUS Eastern Standard Time'
+$TZ = [System.TimeZoneInfo]::FindSystemTimeZoneById($strCurrentTimeZone)
+$LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
+Return $LocalTime
+}
+
 switch ($request.Length) {
     3 {
         $airport_code = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_ICAO_from_IATA?code=$request).icao
@@ -17,12 +30,25 @@ switch ($request.Length) {
     }
 }
 
-$airport_code
-$res = Invoke-RestMethod -Method Get -Uri "http://avwx-api.azurewebsites.net/api/metar/$($airport_code)?format=JSON&options=translate,info" -verbose
+$airport_code = ($airport_code).ToUpper()
+$weather = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/MetarEx?airport=$($airport_code)&howMany=1" -Headers $Headers -Verbose).MetarExResult.metar
+$airport = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($airport_code)" -Headers $Headers -Verbose).AirportInfoResult
 
-if ($res) {
+$result = @"
+Weather Info for $(${airport}.name) / ${airport_code}
+Observation Date = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${weather}.time)).ToString())).ToString())*
+Clouds = $(${weather}.cloud_friendly)
+Clouds altitude = $(${weather}.cloud_altitude)
+Cloud type = $(${weather}.cloud_type)
+Pressure = $(${weather}.pressure)
+Wind = $(${weather}.wind_direction) / $(${weather}.wind_speed)
+Wind Gusts = $(${weather}.wind_speed_gust)
+Visibility = $(${weather}.visibility)
+"@
+
+if ($result) {
     $response_body = @{
-        text = "Weather for $($res.Info[0].City) $($res.Info[0].Name) / $airport_code : $($($res.Translations[0]) | ConvertTo-Json)"
+        text = "$result"
         response_type = 'in_channel'
     }
 }
@@ -31,6 +57,5 @@ else {
         text = 'Something went wrong with the weather API.'
     }
 }
-$res.Translations[0] | ConvertTo-Json
 
 Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
