@@ -43,12 +43,12 @@ $airport = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.co
 
 # Get air pressure in hPa
 $regex = 'Q\d{4}'
-($weather.MetarExResult.metar.raw_data) -match $regex
+($weather.raw_data) -match $regex
 $pressure = $Matches[0]
 
 # CAVOK?
 $regex = 'CAVOK'
-if (($weather.MetarExResult.metar.raw_data) -match $regex) {
+if (($weather.raw_data) -match $regex) {
 	$CAVOK = $true
 }
 
