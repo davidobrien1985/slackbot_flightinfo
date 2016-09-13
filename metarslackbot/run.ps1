@@ -63,6 +63,7 @@ $result = @"
 	Wind = $(${weather}.wind_direction) degrees / $(${weather}.wind_speed) kts
 	Wind Gusts = $(${weather}.wind_speed_gust) kts
 	Visibility = $(${weather}.visibility) m
+	Raw Report = $(${weather}.raw_data)
 "@
 
 if ($result) {
