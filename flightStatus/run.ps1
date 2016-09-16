@@ -31,22 +31,26 @@ $flightno = $flightnumber.Substring(3)
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline)&flightno=$($flightno)" -Headers $Headers -Verbose
 
 if ($flight.error) {
-	$response_body = @{
-			text = 'This flight number does not exist or does not exist in the Flightaware database.'
-		}
+  $response_body = @{
+      text = 'This flight number does not exist or does not exist in the Flightaware database.'
+    }
 }
 else {
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$flightnumber"})
 
 $flightident = "$flightnumber@$($actualflight.departuretime)"
 $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
+
+$origin = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($actualflight.origin)" -Headers $Headers -Verbose).AirportInfoResult.name
+$destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($actualflight.destination)" -Headers $Headers -Verbose).AirportInfoResult.name
+
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
 $result = @"
 Flight # = *$(${actualflight}.ident)*
 Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
-From = *$(${flightInfoEx}.originName)*
-To = *$(${flightInfoEx}.destinationName)*
+From = *$(${origin})*
+To = *$(${destination})*
 Type of aircraft = $(${actualflight}.aircrafttype)
 Filed Departure Time = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
 Estimated Arrival Time = $((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
@@ -55,8 +59,8 @@ Departure Terminal = $(${airlineflightInfo}.terminal_orig)
 "@
 
 $response_body = @{
-	text = "$result"
-	response_type = 'in_channel'
+  text = "$result"
+  response_type = 'in_channel'
 }
 }
 
