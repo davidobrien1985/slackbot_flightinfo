@@ -11,6 +11,15 @@ $LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
 Return $LocalTime
 }
 
+Function Convert-Datetime {
+  param (
+  $dateTimeobject
+  )
+
+  $newDateTime = Get-Date $datetimeobject -Format 'dd/MM/yyyy hh:mm:ss'
+  $newDateTime
+}
+
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
 $basicAuthValue = "Basic $encodedCreds"
@@ -46,14 +55,15 @@ $destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightawar
 
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
+
 $result = @"
 Flight # = *$(${actualflight}.ident)*
 Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
 From = *$(${origin}) // $(${actualflight}.origin) *
 To = *$(${destination}) // $(${actualflight}.destination)*
 Type of aircraft = $(${actualflight}.aircrafttype)
-Filed Departure Time = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
-Estimated Arrival Time = $((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
+Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
+Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
 Departure Terminal = $(${airlineflightInfo}.terminal_orig)
 Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
