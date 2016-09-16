@@ -49,13 +49,13 @@ $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flig
 $result = @"
 Flight # = *$(${actualflight}.ident)*
 Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
-From = *$(${origin})*
-To = *$(${destination})*
+From = *$(${origin}) // $(${actualflight}.origin) *
+To = *$(${destination}) // $(${actualflight}.destination)*
 Type of aircraft = $(${actualflight}.aircrafttype)
 Filed Departure Time = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
 Estimated Arrival Time = $((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
-Departure Gate = $(${airlineflightInfo}.gate_orig)
 Departure Terminal = $(${airlineflightInfo}.terminal_orig)
+Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
 
 $response_body = @{
