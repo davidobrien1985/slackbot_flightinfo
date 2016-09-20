@@ -35,9 +35,10 @@ $tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalT
 $flightnumber = ($req_query_flightnumber).ToUpper()
 
 
-
+# Get the IATA Code from the request query param $flightnumber
 $airline_iata = $flightnumber.Substring(0,2)
-$airline_icao = Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/convert_airline_IATA_to_ICAO?iata=${airline_iata}
+# Convert the IATA code to the ICAO code and pick the actual code, hence Substring
+$airline_icao = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/convert_airline_IATA_to_ICAO?iata=${airline_iata}).SubString(0,3)
 $airline_icao
 $flightno = $flightnumber.Substring(2)
 $flightno
@@ -50,7 +51,7 @@ if ($flight.error) {
     }
 }
 else {
-"$airline_icao$flightno"
+
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$airline_icao$flightno"})
 
 $flightident = "${airline_icao}${flightno}@$($actualflight.departuretime)"
