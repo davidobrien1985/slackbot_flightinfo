@@ -53,7 +53,7 @@ if (($weather.raw_data) -match $regex) {
 }
 
 $result = @"
-* ${username} here is your Weather Info for $(${airport}.name) / ${airport_code}*
+* ${req_query_user} here is your Weather Info for $(${airport}.name) / ${airport_code}*
     Observation Date = *$((Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${weather}.time)).ToString())).ToString())*
   Clouds = $(${weather}.cloud_friendly)
   Clouds altitude = $(if ($CAVOK) {"No clouds below 10,000ft"} else {"$(${weather}.cloud_altitude) ft"})
