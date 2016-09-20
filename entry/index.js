@@ -34,7 +34,7 @@ module.exports = function (context, req) {
     }
 
     function getFlightStatus(flightnumber) {
-        if (req.simple == "true") {
+        if (req.query.simple == "true") {
         context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`);
         https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`, function (res) {
             var body = ''; // Will contain the final response
