@@ -76,9 +76,7 @@ else {
   $airport_code_destination = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_destination}).iata
     $result = @"
   * ${req_query_user}, here is your flight info for Flight # $(${actualflight}.ident)*
-  From = *$(${origin}) // $(${airport_code_origin}) *
-  To = *$(${destination}) // $(${airport_code_destination})*
-  Type of aircraft = $(${actualflight}.aircrafttype)
+  From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${actualflight}.aircrafttype)
   Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
   Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
   Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
