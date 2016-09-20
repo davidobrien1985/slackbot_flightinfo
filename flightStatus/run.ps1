@@ -55,7 +55,7 @@ $destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightawar
 
 $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
-if ($simple) {
+if (-not ($req_query_simple)) {
   $result = @"
   * ${req_query_user}, here is your flight info for Flight # $(${actualflight}.ident)*
   Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
@@ -69,20 +69,19 @@ if ($simple) {
 "@
 }
 else {
+
   $icao_origin = $(${actualflight}.origin)
   $icao_destination = ${actualflight}.destination
   $airport_code_origin = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_origin}).iata
   $airport_code_destination = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_destination}).iata
     $result = @"
   * ${req_query_user}, here is your flight info for Flight # $(${actualflight}.ident)*
-  Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
   From = *$(${origin}) // $(${airport_code_origin}) *
   To = *$(${destination}) // $(${airport_code_destination})*
   Type of aircraft = $(${actualflight}.aircrafttype)
   Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
   Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
-  Departure Terminal = $(${airlineflightInfo}.terminal_orig)
-  Departure Gate = $(${airlineflightInfo}.gate_orig)
+  Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
 "@
 }
 
