@@ -12,9 +12,9 @@ module.exports = function (context, req) {
     // define function to call other Azure function to get the weather
     function getMetar(icaocode) {
 
-        context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}`);
+        context.log(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`);
 
-        https.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}`, function (res) {
+        https.get(`https://dogithub.azurewebsites.net/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
@@ -34,8 +34,8 @@ module.exports = function (context, req) {
     }
 
     function getFlightStatus(flightnumber) {
-        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`);
-        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}`, function (res) {
+        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`);
+        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
