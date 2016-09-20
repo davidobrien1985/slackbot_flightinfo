@@ -34,8 +34,9 @@ module.exports = function (context, req) {
     }
 
     function getFlightStatus(flightnumber) {
-        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`);
-        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`, function (res) {
+        if (req.simple == "true") {
+        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`);
+        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
@@ -52,6 +53,26 @@ module.exports = function (context, req) {
             .on('error', function (e) {
                 context.log("Got error: " + e.message);
             });
+        } else {
+        context.log(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`);
+        https.get(`https://dogithub.azurewebsites.net/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`, function (res) {  
+            var body = ''; // Will contain the final response
+            // Received data is a buffer.
+            // Adding it to our body
+            res.on('data', function (data) {
+                body += data;
+            });
+            // After the response is completed, parse it and log it to the console
+            res.on('end', function () {
+                var parsed = JSON.parse(body);
+                context.log(parsed);
+            });
+        })
+            // If any error has occured, log error to console
+            .on('error', function (e) {
+                context.log("Got error: " + e.message);
+            });  
+        }       
     }
 
     context.log('Command was %s', command); 
