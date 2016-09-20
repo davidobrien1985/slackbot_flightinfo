@@ -1,7 +1,7 @@
 
 
 $Fields = @{"iatacode" = "$req_query_iata"}
-$WebResponse = Invoke-WebRequest -Uri "http://www.airlinecodes.co.uk/airlcoderes.asp" -Method Post -Body $Fields
+$WebResponse = Invoke-RestMethod -Uri "http://www.airlinecodes.co.uk/airlcoderes.asp" -Method Post -Body $Fields
 $TD = $WebResponse.AllElements | Where {$_.TagName -eq "TD" }
 
 $regex = '<TD>\D{3}<\/TD>'
