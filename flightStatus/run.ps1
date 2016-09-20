@@ -38,7 +38,7 @@ $flightnumber = ($req_query_flightnumber).ToUpper()
 
 $airline_iata = $flightnumber.Substring(0,2)
 $airline_icao = Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/convert_airline_IATA_to_ICAO?iata=${airline_iata}
-
+$airline_icao
 $flightno = $flightnumber.Substring(3)
 
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline_icao)&flightno=$($flightno)" -Headers $Headers -Verbose
