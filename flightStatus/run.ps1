@@ -50,7 +50,7 @@ if ($flight.error) {
     }
 }
 else {
-$actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$flightnumber"})
+$actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$airline_icao$flightno"})
 
 $flightident = "$flightnumber@$($actualflight.departuretime)"
 $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
