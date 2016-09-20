@@ -2,7 +2,8 @@
 $req_query_iata
 
 $Fields = @{"iatacode" = "$req_query_iata"}
-$WebResponse = Invoke-RestMethod -Uri "http://www.airlinecodes.co.uk/airlcoderes.asp" -Method Post -Body $Fields
+$WebResponse = Invoke-RestMethod -Uri "http://www.airlinecodes.co.uk/airlcoderes.asp" -Method Post -Body $Fields -Verbose
+$WebResponse
 $TD = $WebResponse.AllElements | Where {$_.TagName -eq "TD" }
 $TD
 
