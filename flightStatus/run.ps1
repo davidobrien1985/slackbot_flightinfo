@@ -57,7 +57,7 @@ foreach ($iactualflight in $actualflight){
   $flightident = "${airline_icao}${flightno}@$($iactualflight.departuretime)"
   $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
 
-  $origin = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($aictualflight.origin)" -Headers $Headers -Verbose).AirportInfoResult.name
+  $origin = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($iactualflight.origin)" -Headers $Headers -Verbose).AirportInfoResult.name
   $destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($iactualflight.destination)" -Headers $Headers -Verbose).AirportInfoResult.name
 
   $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
