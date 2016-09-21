@@ -53,6 +53,11 @@ if ($flight.error) {
 else {
 
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$airline_icao$flightno"})
+
+# output flights
+$actualflight
+
+# if multiple flights, loop through them
 foreach ($iactualflight in $actualflight){
   $flightident = "${airline_icao}${flightno}@$($iactualflight.departuretime)"
   $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
@@ -94,8 +99,8 @@ foreach ($iactualflight in $actualflight){
     text = "$result"
     response_type = 'in_channel'
   }
-  }
-
+  
   Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
+}
 }
 Out-File -Encoding Ascii $response -inputObject "$(ConvertTo-Json $response_body)"
