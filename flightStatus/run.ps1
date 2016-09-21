@@ -53,49 +53,49 @@ if ($flight.error) {
 else {
 
 $actualflight = ($flight.AirlineFlightSchedulesResult.data | Where-Object -FilterScript {$PSItem.ident -eq "$airline_icao$flightno"})
+foreach ($iactualflight in $actualflight){
+  $flightident = "${airline_icao}${flightno}@$($iactualflight.departuretime)"
+  $flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
 
-$flightident = "${airline_icao}${flightno}@$($actualflight.departuretime)"
-$flightInfoEx = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/FlightInfoEx?ident=$($flightident)&howMany=2" -Headers $Headers -Verbose).FlightInfoExResult.flights
+  $origin = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($aictualflight.origin)" -Headers $Headers -Verbose).AirportInfoResult.name
+  $destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($iactualflight.destination)" -Headers $Headers -Verbose).AirportInfoResult.name
 
-$origin = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($actualflight.origin)" -Headers $Headers -Verbose).AirportInfoResult.name
-$destination = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirportInfo?airportCode=$($actualflight.destination)" -Headers $Headers -Verbose).AirportInfoResult.name
+  $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
-$airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
-
-if (-not ($req_query_simple)) {
-  $result = @"
-  * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${actualflight}.ident)*
-  Code Share Flight # = $(if ($(${actualflight}.actual_ident)) {$(${actualflight}.actual_ident)} else {'n/a'})
-  From = *$(${origin}) // $(${actualflight}.origin) *
-  To = *$(${destination}) // $(${actualflight}.destination)*
-  Type of aircraft = $(${actualflight}.aircrafttype)
-  Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
-  Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
-  Departure Terminal = $(${airlineflightInfo}.terminal_orig)
-  Departure Gate = $(${airlineflightInfo}.gate_orig)
-"@
-}
-else {
-
-  $icao_origin = $(${actualflight}.origin)
-  $icao_destination = ${actualflight}.destination
-  $airport_code_origin = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_origin}).iata
-  $airport_code_destination = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_destination}).iata
+  if (-not ($req_query_simple)) {
     $result = @"
-  * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${actualflight}.ident)*
-  From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${actualflight}.aircrafttype)
-  Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.departuretime)).ToString())).ToString())*
-  Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${actualflight}.arrivaltime)).ToString())).ToString())
-  Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
+    * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${iactualflight}.ident)*
+    Code Share Flight # = $(if ($(${iactualflight}.actual_ident)) {$(${iactualflight}.actual_ident)} else {'n/a'})
+    From = *$(${origin}) // $(${iactualflight}.origin) *
+    To = *$(${destination}) // $(${iactualflight}.destination)*
+    Type of aircraft = $(${iactualflight}.aircrafttype)
+    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.departuretime)).ToString())).ToString())*
+    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.arrivaltime)).ToString())).ToString())
+    Departure Terminal = $(${airlineflightInfo}.terminal_orig)
+    Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
-}
+  }
+  else {
 
-$response_body = @{
-  text = "$result"
-  response_type = 'in_channel'
-}
-}
+    $icao_origin = $(${iactualflight}.origin)
+    $icao_destination = ${iactualflight}.destination
+    $airport_code_origin = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_origin}).iata
+    $airport_code_destination = (Invoke-RestMethod -Method Get -Uri https://dogithub.azurewebsites.net/api/get_IATA_from_ICAO?code=${icao_destination}).iata
+      $result = @"
+    * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${iactualflight}.ident)*
+    From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${iactualflight}.aircrafttype)
+    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.departuretime)).ToString())).ToString())*
+    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.arrivaltime)).ToString())).ToString())
+    Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
+"@
+  }
 
-Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
+  $response_body = @{
+    text = "$result"
+    response_type = 'in_channel'
+  }
+  }
 
+  Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
+}
 Out-File -Encoding Ascii $response -inputObject "$(ConvertTo-Json $response_body)"
