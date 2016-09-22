@@ -45,9 +45,9 @@ $flightno
 
 $flight = Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightSchedules?startDate=$($today)&endDate=$($tomorrow)&airline=$($airline_icao)&flightno=$($flightno)" -Headers $Headers -Verbose
 
-if ($flight.error) {
+if (($flight.error) -or ($flight.AirlineFlightSchedulesResult.data -eq '')) {
   $response_body = @{
-      text = 'This flight number does not exist or does not exist in the Flightaware database.'
+      text = 'This flight number does not exist or does not exist in the Flightaware database for the next 24hrs.'
     }
 }
 else {
