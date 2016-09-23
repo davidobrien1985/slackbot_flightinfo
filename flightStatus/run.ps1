@@ -75,8 +75,8 @@ foreach ($iactualflight in $actualflight){
     From = *$(${origin}) // $(${iactualflight}.origin) *
     To = *$(${destination}) // $(${iactualflight}.destination)*
     Type of aircraft = $(${iactualflight}.aircrafttype)
-    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.departuretime)).ToString())).ToString())*
-    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.arrivaltime)).ToString())).ToString())
+    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
+    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
     Departure Terminal = $(${airlineflightInfo}.terminal_orig)
     Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
@@ -90,8 +90,8 @@ foreach ($iactualflight in $actualflight){
       $result = @"
     * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${iactualflight}.ident)*
     From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${iactualflight}.aircrafttype)
-    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.departuretime)).ToString())).ToString())*
-    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${iactualflight}.arrivaltime)).ToString())).ToString())
+    Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
+    Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
     Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
 "@
   }
