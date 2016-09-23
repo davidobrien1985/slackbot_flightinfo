@@ -20,6 +20,20 @@ Function Convert-Datetime {
   $newDateTime
 }
 
+Function Get-ETD {
+
+  param (
+    $filed_ete,
+    $eta
+  )
+
+  $textReformat = $flightInfoEx.filed_ete -replace ",","."
+  $seconds = ([TimeSpan]::Parse($textReformat)).TotalSeconds
+  
+  $eta.AddSeconds(-($seconds))
+
+}
+
 $pair = "$($env:flightaware_user):$($env:flightaware_api)"
 $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
 $basicAuthValue = "Basic $encodedCreds"
@@ -77,6 +91,7 @@ foreach ($iactualflight in $actualflight){
     Type of aircraft = $(${iactualflight}.aircrafttype)
     Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
     Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
+    Current Delay = 
     Departure Terminal = $(${airlineflightInfo}.terminal_orig)
     Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
