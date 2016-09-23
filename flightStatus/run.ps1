@@ -82,6 +82,11 @@ foreach ($iactualflight in $actualflight){
 
   $airlineflightInfo = (Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($flightInfoEx.faFlightID)" -Headers $Headers -Verbose).AirlineFlightInfoResult
 
+  $fdt = ConvertFrom-Unixdate $flightInfoEx.filed_departuretime
+  $etd = Get-ETD -filed_ete $flightInfoEx.filed_ete -eta (ConvertFrom-Unixdate $flightInfoEx.estimatedarrivaltime)
+
+  $delay = $etd - $fdt
+
   if (-not ($req_query_simple)) {
     $result = @"
     * ${req_query_user}, here is your flight info for Flight # $flightnumber / $(${iactualflight}.ident)*
@@ -91,7 +96,8 @@ foreach ($iactualflight in $actualflight){
     Type of aircraft = $(${iactualflight}.aircrafttype)
     Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
     Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
-    Current Delay = 
+    Current estimated time of departure = $etd
+    Current Delay = $delay.Hours hours and $delay.Minutes minutes
     Departure Terminal = $(${airlineflightInfo}.terminal_orig)
     Departure Gate = $(${airlineflightInfo}.gate_orig)
 "@
@@ -107,6 +113,8 @@ foreach ($iactualflight in $actualflight){
     From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${iactualflight}.aircrafttype)
     Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
     Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
+    Current estimated time of departure = $etd
+    Current Delay = $delay.Hours hours and $delay.Minutes minutes
     Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
 "@
   }
