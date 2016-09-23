@@ -96,7 +96,7 @@ foreach ($iactualflight in $actualflight){
     Type of aircraft = $(${iactualflight}.aircrafttype)
     Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
     Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
-    Current estimated time of departure = $(Convert-Datetime (Get-LocalTime -UTCTime $etd))
+    Current estimated time of departure = $(Get-LocalTime -UTCTime $etd)
     Current Delay = $delay
     Departure Terminal = $(${airlineflightInfo}.terminal_orig)
     Departure Gate = $(${airlineflightInfo}.gate_orig)
@@ -113,7 +113,7 @@ foreach ($iactualflight in $actualflight){
     From *$(${origin}) // $(${airport_code_origin})* to *$(${destination}) // $(${airport_code_destination})* on $(${iactualflight}.aircrafttype)
     Filed Departure Time = *$(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.filed_departuretime)).ToString())).ToString())*
     Estimated Arrival Time = $(Convert-Datetime (Get-LocalTime -UTCTime ((ConvertFrom-Unixdate $(${flightInfoEx}.estimatedarrivaltime)).ToString())).ToString())
-    Current estimated time of departure = $(Convert-Datetime (Get-LocalTime -UTCTime $etd))
+    Current estimated time of departure = $(Get-LocalTime -UTCTime $etd)
     Current Delay = $delay
     Departure terminal $(${airlineflightInfo}.terminal_orig) from gate $(${airlineflightInfo}.gate_orig)
 "@
