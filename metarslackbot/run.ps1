@@ -69,7 +69,7 @@ $result = @"
 if ($result) {
     $response_body = @{
         text = "$result"
-        response_type = 'in_channel'
+        response_type = 'ephemeral'
     }
 }
 else {

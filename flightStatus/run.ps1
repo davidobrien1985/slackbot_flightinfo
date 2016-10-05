@@ -121,7 +121,7 @@ foreach ($iactualflight in $actualflight){
 
   $response_body = @{
     text = "$result"
-    response_type = 'in_channel'
+    response_type = 'ephemeral'
   }
   
   Invoke-RestMethod -Uri $decoded_response_url -Method Post -ContentType 'application/json' -Body (ConvertTo-Json $response_body) -Verbose
