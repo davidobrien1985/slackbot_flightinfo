@@ -1,29 +1,11 @@
 $request = $req_query_icao
 
+Set-FAAuthenticationHeader
+
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback) 
 $decoded_response_url = $decoded_response_url.TrimEnd('"')
 
 Out-File -Encoding Ascii $response -inputObject "$request"
-
-$pair = "$($env:flightaware_user):$($env:flightaware_api)"
-$encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
-$basicAuthValue = "Basic $encodedCreds"
-$Headers = @{
-  Authorization = $basicAuthValue
-}
-
-Function ConvertFrom-Unixdate ($UnixDate) {
-  [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($UnixDate))
-}
-
-# http://blog.tyang.org/2012/01/11/powershell-script-convert-to-local-time-from-utc/
-Function Get-LocalTime($UTCTime)
-{
-$strCurrentTimeZone = 'AUS Eastern Standard Time'
-$TZ = [System.TimeZoneInfo]::FindSystemTimeZoneById($strCurrentTimeZone)
-$LocalTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($UTCTime, $TZ)
-Return $LocalTime
-}
 
 switch ($request.Length) {
     3 {
