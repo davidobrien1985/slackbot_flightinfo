@@ -15,7 +15,7 @@ $airline_icao = Get-ICAOCode -iata $airline_iata
 $flightno = $flightnumber.Substring(2)
 $flightno
 
-$flight = Get-FAFlightInfo -today $today -tomorrow $tomorrow -airline_icao $airline_icao -flightno $flightno -Verbose
+$flight = Get-FlightInfo -today $today -tomorrow $tomorrow -airline_icao $airline_icao -flightno $flightno -Verbose
 
 if (($flight.error) -or (($flight.AirlineFlightSchedulesResult.data).Count -eq 0)) {
   $response_body = @{
