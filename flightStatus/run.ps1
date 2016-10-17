@@ -1,4 +1,4 @@
-Set-FAAuthenticationHeader
+Set-AuthenticationHeader
 
 $flightnumber = ($req_query_flightnumber).ToUpper()
 
@@ -10,7 +10,7 @@ $tomorrow = [Math]::Floor([decimal](Get-Date((Get-Date).AddDays(1)).ToUniversalT
 # Get the IATA Code from the request query param $flightnumber
 $airline_iata = $flightnumber.Substring(0,2)
 # Convert the IATA code to the ICAO code and pick the actual code, hence Substring
-$airline_icao = Get-FAICAOCode -iata $airline_iata
+$airline_icao = Get-ICAOCode -iata $airline_iata
 
 $flightno = $flightnumber.Substring(2)
 $flightno
