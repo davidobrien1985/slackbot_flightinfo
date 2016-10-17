@@ -1,3 +1,5 @@
+Get-Module -ListAvailable
+Import-Module -Name PSFlightAware -Verbose
 Set-AuthenticationHeader
 
 $flightnumber = ($req_query_flightnumber).ToUpper()
