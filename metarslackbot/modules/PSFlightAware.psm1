@@ -45,13 +45,14 @@ Function Get-ETD {
 }
 
 Function Set-AuthenticationHeader {
-
+  $env:flightaware_user
   $pair = "$($env:flightaware_user):$($env:flightaware_api)"
   $encodedCreds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
   $basicAuthValue = "Basic $encodedCreds"
   $Headers = @{
     Authorization = $basicAuthValue
   }
+  $pair
   $global:Headers
 }
 
