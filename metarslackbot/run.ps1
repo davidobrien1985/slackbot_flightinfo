@@ -1,6 +1,6 @@
 $request = $req_query_icao
 
-$headers = Set-AuthenticationHeader -flightaware_user $env:flightaware_user -flightaware_api $env:flightaware_api
+$global:headers = Set-AuthenticationHeader -flightaware_user $env:flightaware_user -flightaware_api $env:flightaware_api
 
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback) 
 $decoded_response_url = $decoded_response_url.TrimEnd('"')

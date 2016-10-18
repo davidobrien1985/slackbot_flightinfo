@@ -110,5 +110,5 @@ Function Get-AirlineFlightInfo {
   param (
     $faFlightID
   )
-  Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$(faFlightID)" -Headers $Headers -Verbose
+  Invoke-RestMethod -Method Get -Uri "https://flightxml.flightaware.com/json/FlightXML2/AirlineFlightInfo?faFlightID=$($faFlightID)" -Headers $Headers -Verbose
 } 
