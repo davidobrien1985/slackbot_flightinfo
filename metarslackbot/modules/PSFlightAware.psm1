@@ -6,7 +6,7 @@ Function Get-ICAOCode {
   $Fields = @{"status" = "Y"; "iataairl" = "$iata"}
   $avcode = Invoke-RestMethod -Uri "http://avcodes.co.uk/airlcoderes.asp" -Method Post -Body $Fields -Verbose
   $regex = 'ICAO Code:<br />&nbsp;\D{3}'
-  $avcode -match $regex
+  $avcode -match $regex | Out-Null
   $airline_icao = ($Matches[0]).Split(';')[1].SubString(0,3)
   $airline_icao
 }
@@ -39,7 +39,7 @@ Function Get-ETD {
     [Parameter(Mandatory=$true)]
     [string]$eta
   )
-  $textReformat = $flightInfoEx.filed_ete -replace ",","."
+  $textReformat = $filed_ete -replace ",","."
   $seconds = ([TimeSpan]::Parse($textReformat)).TotalSeconds 
   $eta.AddSeconds(-($seconds))
 }
