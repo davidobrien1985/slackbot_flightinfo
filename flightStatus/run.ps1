@@ -1,5 +1,5 @@
 
-Set-AuthenticationHeader
+Set-AuthenticationHeader -flightaware_user $env:flightaware_user -flightaware_api $env:flightaware_api
 
 $flightnumber = ($req_query_flightnumber).ToUpper()
 
