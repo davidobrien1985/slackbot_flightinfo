@@ -55,8 +55,7 @@ Function Set-AuthenticationHeader {
   $Headers = @{
     Authorization = $basicAuthValue
   }
-  $pair
-  $global:Headers
+  $Headers
 }
 
 Function Get-FlightInfo {
