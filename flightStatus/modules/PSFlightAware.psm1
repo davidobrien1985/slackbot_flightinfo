@@ -35,9 +35,9 @@ Function Convert-Datetime {
 Function Get-ETD {
   param (
     [Parameter(Mandatory=$true)]
-    [string]$filed_ete,
+    $filed_ete,
     [Parameter(Mandatory=$true)]
-    [string]$eta
+    $eta
   )
   $textReformat = $filed_ete -replace ",","."
   $seconds = ([TimeSpan]::Parse($textReformat)).TotalSeconds 
