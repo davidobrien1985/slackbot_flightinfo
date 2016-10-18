@@ -1,6 +1,6 @@
 $request = $req_query_icao
 
-Set-FAAuthenticationHeader
+Set-AuthenticationHeader
 
 $decoded_response_url = [System.Web.HttpUtility]::UrlDecode($req_query_callback) 
 $decoded_response_url = $decoded_response_url.TrimEnd('"')
