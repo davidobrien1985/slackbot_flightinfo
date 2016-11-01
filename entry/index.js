@@ -1,8 +1,8 @@
 var https = require('https');
 
 module.exports = function (context, req) {
-    context.log('context:', JSON.stringify(context, null, 2));
-    
+    //context.log('context:', JSON.stringify(context, null, 2));
+    context.log(process.env[functionUrl]);
     var input = JSON.stringify(req.body);
     var command = input.split('&')[7].split('=')[1];
     var userquery = input.split('&')[8].split('=')[1];
