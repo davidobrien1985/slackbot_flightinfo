@@ -10,6 +10,8 @@ The following requirements need to be met for this code to work.
     - user name 
   - flightaware_api
     - FlightAware API key for above user name
+  - functionUrl
+    - URL to the Azure Function App
 - Slack Team with a Slash command configured to trigger the `entry` function 
 
 # entry
