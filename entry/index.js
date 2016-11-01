@@ -2,7 +2,7 @@ var https = require('https');
 
 module.exports = function (context, req) {
     //context.log('context:', JSON.stringify(context, null, 2));
-    context.log(process.env[functionUrl]);
+    context.log(process.env["functionUrl"]);
     var input = JSON.stringify(req.body);
     var command = input.split('&')[7].split('=')[1];
     var userquery = input.split('&')[8].split('=')[1];
@@ -12,9 +12,9 @@ module.exports = function (context, req) {
     // define function to call other Azure function to get the weather
     function getMetar(icaocode) {
 
-        context.log(`https://${process.env[functionUrl]}/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`);
+        context.log(`https://${process.env["functionUrl"]}/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`);
 
-        https.get(`https://${process.env[functionUrl]}/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`, function (res) {
+        https.get(`https://${process.env["functionUrl"]}/api/metarSlackbot?icao=${icaocode}&callback=${callback}&user=${username}`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
@@ -35,8 +35,8 @@ module.exports = function (context, req) {
 
     function getFlightStatus(flightnumber) {
         if (req.query.simple == "true") {
-        context.log(`https://${process.env[functionUrl]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`);
-        https.get(`https://${process.env[functionUrl]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`, function (res) {
+        context.log(`https://${process.env["functionUrl"]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`);
+        https.get(`https://${process.env["functionUrl"]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}&simple=true`, function (res) {
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
@@ -54,8 +54,8 @@ module.exports = function (context, req) {
                 context.log("Got error: " + e.message);
             });
         } else {
-        context.log(`https://${process.env[functionUrl]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`);
-        https.get(`https://${process.env[functionUrl]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`, function (res) {  
+        context.log(`https://${process.env["functionUrl"]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`);
+        https.get(`https://${process.env["functionUrl"]}/api/flightStatus?flightnumber=${flightnumber}&callback=${callback}&user=${username}`, function (res) {  
             var body = ''; // Will contain the final response
             // Received data is a buffer.
             // Adding it to our body
